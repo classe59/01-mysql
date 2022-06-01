@@ -1,0 +1,74 @@
+1) Lista videogiochi
+    SELECT * FROM `videogames`
+
+2) Quanti videogiochi ci sono nel DB (COUNT)
+    SELECT COUNT(*) AS `Num_Videogiochi`  FROM `videogames`
+
+3) Quanti videogiochi iniziano con una data stringa nel titolo (LIKE) "the"
+    SELECT *
+    FROM `videogames`
+    WHERE `videogames`.`title`LIKE 'the%'
+
+3a) Quanti videogiochi contengono una data stringa nel titolo (LIKE)
+    SELECT *
+    FROM `videogames`
+    WHERE `videogames`.`title`LIKE '%the%'
+
+4) Quanti videogiochi per Software house ID (COUNT e GROUP BY)
+    SELECT COUNT(`id`) AS `num_giochi`, `software_house_ID`
+    FROM `videogames`
+    GROUP BY `software_house_ID`
+
+5a) Quanti videogiochi per Software house, con nome Software house
+    SELECT COUNT(`videogames`.`id`) AS `num_giochi`, `software_houses`.`id`, `software_houses`.`name`
+    FROM `videogames`
+    RIGHT JOIN `software_houses`ON `software_houses`.`id`=`videogames`.`software_house_ID`
+    GROUP BY `software_houses`.`id`, `software_houses`.`name`
+
+8) Quanti videogiochi hanno più di 30 recensioni, con videogioco ID (per vedere bene l'ordinamento per più campi, fate in modo di avere più videogiochi con lo stesso numero di recensioni)
+    SELECT COUNT(*) AS `num_recensioni`, `reviews`.`videogame_ID`
+    FROM `reviews`
+    GROUP BY `reviews`.`videogame_ID`
+    HAVING `num_recensioni` > 30
+    ORDER BY `num_recensioni` ASC, `reviews`.`videogame_ID` DESC
+
+### QUERIES EXTRA - non viste nel recap ###
+
+6) Quanti videogiochi per Software house per anno, con nome Software house (JOIN, COUNT e GROUP BY)
+    SELECT
+        COUNT(*) AS `numero videogiochi`,
+        YEAR(`release_date`),
+        `software_house_ID` AS `ID software house`,
+        `software_houses`.`name` AS `software house`
+    FROM `videogames`
+    INNER JOIN `software_houses` ON
+        `software_houses`.`id` = `software_house_ID`
+    GROUP BY
+        `software_house_ID`,
+        `software_houses`.`name`,
+        YEAR(`release_date`)
+
+12) Voto medio di ogni software house, dato dalla media voto di ogni gioco (JOIN, AVG)
+	select software_houses.name, avg(vote)
+	from videogames
+	INNER JOIN reviews
+	on videogames.id = reviews.videogame_ID
+	INNER JOIN software_houses
+	on videogames.software_house_ID = software_houses.id
+	group by software_houses.id, software_houses.name
+
+
+ESEMPI DI LEFT E RIGHT JOIN
+
+SELECT * 
+FROM `videogames`
+RIGHT JOIN `genres_videogames` ON `genres_videogames`.`videogame_ID` = `videogames`.`id`
+RIGHT JOIN `genres` ON `genres_videogames`.`genres_ID`= `genres`.`ID`
+
+SELECT * 
+FROM `videogames`
+LEFT JOIN `genres_videogames` ON `genres_videogames`.`videogame_ID` = `videogames`.`id`;
+
+SELECT * 
+FROM `genres_videogames`
+RIGHT JOIN `genres` ON `genres_videogames`.`genres_ID`= `genres`.`ID`
